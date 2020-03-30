@@ -1,0 +1,1 @@
+from leoapi.Lingualeo import first_connection_leo
