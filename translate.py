@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import requests
 import Cookies
 import leoapi
+import View
 
 LOGIN_FILE = 'login.txt'
 COOKIES_FILE = 'Cookies/cookies'
@@ -11,12 +14,12 @@ with open(LOGIN_FILE, 'r') as login_data:
 
 def main():
     url = "https://api.lingualeo.com/api/login"
-    #TODO улучшить проверку авторизации
-    s = requests.Session
+    s = requests.Session()
     try:
         cookies = Cookies.load_cookies(COOKIES_FILE)
         print("Вы авторизованы.")
-        r = requests.get(url, cookies = cookies)
+        s.cookies = cookies
+        r = s.get(url)
         print(r.text)
     except:
         print("Вы не авторизованы. Введите логин:")
@@ -25,10 +28,20 @@ def main():
         print("Введите пароль:")
         input()
         password = Gpassword
-        response_obj = leoapi.first_connection_leo(login, password)
-        Cookies.save_cookies(response_obj.cookies, COOKIES_FILE)
-    print("Введите слово:")
+        s.cookies = leoapi.first_connection_leo(login, password).cookies
+        Cookies.save_cookies(s.cookies, COOKIES_FILE)
+    print("Введите слово ('q' - для выхода):")
     word = input()
-
+    while (word != "q"):
+        row_translates = leoapi.get_row_translates(s, word)
+        print("word - выберите перевод:")
+        View.show_translate_variant(row_translates)
+        num_translate = int(input())
+        if num_translate in range (1, len (row_translates)):
+            leoapi.add_word(s, word, row_translates[num_translate-1]["value"])
+            print("Слово добавлено. Введите новое слово.")
+        else:
+            print("Перевод не выбран. Введите новое слово.")
+        word = input()
 if __name__ == '__main__':
     main()
