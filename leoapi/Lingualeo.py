@@ -14,15 +14,10 @@ def get_session():
         #print("Вы авторизованы.")
         s.cookies = cookies
     except:
-        with open(LOGIN_FILE, 'r') as login_data:
-            Glogin = login_data.readline().rstrip('\n')
-            Gpassword = login_data.readline().rstrip('\n')
         print("Вы не авторизованы. Введите логин:")
-        input()
-        login = Glogin
+        login = input()
         print("Введите пароль:")
-        input()
-        password = Gpassword
+        password = input()
         s.cookies = first_connection_leo(login, password).cookies
         Cookies.save_cookies(s.cookies, COOKIES_FILE)
         print("Перезапустите скрипт.")

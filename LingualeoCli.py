@@ -1,11 +1,8 @@
 # coding: utf-8
 
 import appex
-from html2text import html2text
 import console
-import re
 import leoapi
-import View
 
 
 def main():
@@ -18,11 +15,17 @@ def main():
         return
     s = leoapi.get_session()
     row_translates = leoapi.get_row_translates(s, text)
+    all_t = ""
+    for t in row_translates:
+        all_t += "- " + t["value"] + "\n"
     first_translate = row_translates[0]["value"]
-    answer = console.alert('Добавить слово в словарь?', 
-    '%s - %s' % (text, first_translate), 'Yes', 'No', hide_cancel_button=True)
+    
+    answer = console.alert(text, 
+    '%s' % (all_t), 'Добавить в словарь', 'Отменить', hide_cancel_button=True)
     if (answer == 1):
         leoapi.add_word(s, text, first_translate)
+    
+    console.alert("Слово добавлено", "", 'OK', hide_cancel_button=True)
 
 if __name__ == '__main__':
     main()
